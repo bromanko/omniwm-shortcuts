@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.devenv*
+.direnv/
+.DS_Store
+raycast-env.d.ts

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "omniwm-shortcuts",
+  "version": "0.1.0",
+  "title": "OmniWM Shortcuts",
+  "description": "Search your configured OmniWM keyboard shortcuts.",
+  "icon": "icon.png",
+  "author": "bromanko",
+  "license": "MIT",
+  "platforms": [
+    "macOS"
+  ],
+  "categories": [
+    "Productivity",
+    "System"
+  ],
+  "commands": [
+    {
+      "name": "search-shortcuts",
+      "title": "Search OmniWM Shortcuts",
+      "description": "Browse keyboard shortcuts from your live OmniWM configuration.",
+      "mode": "view",
+      "keywords": [
+        "keybindings",
+        "window",
+        "resize",
+        "cheatsheet"
+      ]
+    }
+  ],
+  "preferences": [
+    {
+      "name": "configPath",
+      "type": "textfield",
+      "title": "Configuration File",
+      "description": "Optional absolute path or ~/ path. Defaults to $XDG_CONFIG_HOME/omniwm/settings.toml or ~/.config/omniwm/settings.toml.",
+      "required": false,
+      "placeholder": "~/.config/omniwm/settings.toml"
+    }
+  ],
+  "scripts": {
+    "dev": "ray develop",
+    "build": "ray build -e dist",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "tsx --test src/*.test.ts",
+    "check": "npm run test && npm run lint && npm run format:check && npm run build"
+  },
+  "dependencies": {
+    "@raycast/api": "^2.12.1",
+    "react": "^19.3.1",
+    "smol-toml": "^1.9.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "eslint": "^10.15.0",
+    "prettier": "^3.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  }
+}
