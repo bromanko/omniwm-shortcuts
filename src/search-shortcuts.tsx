@@ -6,8 +6,14 @@ import {
   List,
   getPreferenceValues,
   openExtensionPreferences,
+  closeMainWindow,
+  showToast,
+  Toast,
 } from "@raycast/api";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
+import { setTimeout } from "node:timers/promises";
+import { commandFor } from "./commands";
+import { createCli, executeAction, findCli } from "./ipc";
 import { readFile } from "node:fs/promises";
 import {
   categories,
@@ -41,6 +47,28 @@ export default function SearchShortcuts() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const executing = useRef(false);
+  const run = async (id: string) => {
+    if (executing.current) return;
+    executing.current = true;
+    try {
+      await executeAction(id, {
+        readConfig: () => readFile(path, "utf8"),
+        cli: createCli(await findCli()),
+        closeRaycast: () => closeMainWindow(),
+        wait: () => setTimeout(100),
+      });
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Could Not Run OmniWM Action",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      executing.current = false;
+    }
+  };
 
   const commonActions = (
     <>
@@ -89,6 +117,14 @@ export default function SearchShortcuts() {
         }
         actions={<ActionPanel>{commonActions}</ActionPanel>}
       />
+      {data && !data.ipcEnabled && (
+        <List.Item
+          title="Command Execution Is Off"
+          subtitle="Enable IPC in OmniWM to run actions; shortcuts can still be copied"
+          icon={Icon.Info}
+          actions={<ActionPanel>{commonActions}</ActionPanel>}
+        />
+      )}
       {data && !data.hotkeysEnabled && (
         <List.Item
           title="OmniWM Keyboard Shortcuts Are Disabled"
@@ -113,13 +149,30 @@ export default function SearchShortcuts() {
                 icon={Icon.Keyboard}
                 accessories={[
                   { text: formatBinding(item.binding), tooltip: item.id },
+                  ...(!commandFor(item.id, data.resizeStepPercent)
+                    ? [
+                        {
+                          text: "Reference Only",
+                          tooltip: "No supported CLI mapping for this action",
+                        },
+                      ]
+                    : []),
                 ]}
                 actions={
                   <ActionPanel>
+                    {data.ipcEnabled &&
+                      commandFor(item.id, data.resizeStepPercent) && (
+                        <Action
+                          title="Run in OmniWM"
+                          icon={Icon.Play}
+                          onAction={() => run(item.id)}
+                        />
+                      )}
                     {item.assigned && (
                       <Action.CopyToClipboard
                         title="Copy Shortcut"
                         content={item.binding}
+                        shortcut={Keyboard.Shortcut.Common.Copy}
                       />
                     )}
                     <Action.CopyToClipboard

@@ -70,6 +70,8 @@ function categoryFor(id: string): Category {
 export function parseShortcuts(source: string): {
   shortcuts: Shortcut[];
   hotkeysEnabled: boolean;
+  ipcEnabled: boolean;
+  resizeStepPercent: number;
 } {
   const data = parse(source);
   if (!Array.isArray(data.hotkeys))
@@ -99,7 +101,14 @@ export function parseShortcuts(source: string): {
       id: entry.id,
       binding: entry.binding,
       assigned: entry.binding.trim() !== "" && entry.binding !== "Unassigned",
-      title: labels[id] ?? humanize(id),
+      title:
+        labels[id] ??
+        humanize(
+          id.replace(
+            /^(switchWorkspace|moveToWorkspace|moveColumnToWorkspace|focusColumn)\.(0|[1-9]\d*)$/,
+            (_, name: string, index: string) => `${name}.${Number(index) + 1}`,
+          ),
+        ),
       category,
       keywords: [
         entry.id,
@@ -127,7 +136,25 @@ export function parseShortcuts(source: string): {
     "hotkeysEnabled" in general &&
     general.hotkeysEnabled === false
   );
-  return { shortcuts, hotkeysEnabled };
+  const ipcEnabled = Boolean(
+    general &&
+    typeof general === "object" &&
+    "ipcEnabled" in general &&
+    general.ipcEnabled === true,
+  );
+  const niri = data.niri;
+  const step =
+    niri && typeof niri === "object" && "resizeStepPercent" in niri
+      ? niri.resizeStepPercent
+      : 5;
+  if (
+    typeof step !== "number" ||
+    !Number.isInteger(step) ||
+    step < 1 ||
+    step > 100
+  )
+    throw new Error("niri.resizeStepPercent must be an integer from 1 to 100.");
+  return { shortcuts, hotkeysEnabled, ipcEnabled, resizeStepPercent: step };
 }
 
 export function configPath(
