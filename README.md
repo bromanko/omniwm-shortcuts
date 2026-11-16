@@ -67,4 +67,4 @@ The parser tests use synthetic fixtures and contain no personal OmniWM configura
 
 ## License
 
-MIT. This is an independent extension, not an official OmniWM project.
+Original extension code is MIT licensed. The official OmniWM icon retains its upstream GPLv2 license; see [icon attribution and source](third-party/omniwm/README.md). This is an independent extension, not an official OmniWM project.
