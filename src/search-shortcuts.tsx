@@ -27,7 +27,7 @@ export default function SearchShortcuts() {
   const [path, setPath] = useState("");
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("assigned");
+  const [filter, setFilter] = useState("all");
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(undefined);
@@ -102,8 +102,8 @@ export default function SearchShortcuts() {
           value={filter}
           onChange={setFilter}
         >
-          <List.Dropdown.Item title="Assigned" value="assigned" />
           <List.Dropdown.Item title="All" value="all" />
+          <List.Dropdown.Item title="Assigned" value="assigned" />
           <List.Dropdown.Item title="Unassigned" value="unassigned" />
         </List.Dropdown>
       }

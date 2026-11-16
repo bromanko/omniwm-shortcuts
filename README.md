@@ -4,7 +4,7 @@ A small Raycast extension for searching and running the keyboard shortcuts in yo
 
 - Reads your configuration when the command opens; **⌘R** refreshes it.
 - Groups actions by resizing/layout, focus, movement, workspaces, and utilities.
-- Shows assigned shortcuts by default; the dropdown also offers all or unassigned actions.
+- Shows all configured actions by default; the dropdown can filter to assigned or unassigned shortcuts.
 - With IPC enabled, **Enter** runs supported actions, including unassigned ones. **⌘C** copies the shortcut; **⌘O** opens the config.
 - Unsupported actions remain visible as **Reference Only**.
 - Supports schema v4 and v5 resize action names and displays readable fallback labels for unfamiliar actions.
